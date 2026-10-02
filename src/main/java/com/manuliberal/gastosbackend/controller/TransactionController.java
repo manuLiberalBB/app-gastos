@@ -34,4 +34,9 @@ public class TransactionController {
         return transactionService.getMonthlyBalance(userId,month,year);
     }
 
+    @PatchMapping("/{id}/toogle-paid")
+    public Transaction toogleTransactionStatus(@PathVariable Long id) {
+        return transactionService.tooglePaidStatus(id);
+    }
+
 }

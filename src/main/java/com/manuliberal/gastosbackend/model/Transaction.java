@@ -16,8 +16,13 @@ public class Transaction {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    private boolean paid;
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    private BrandWallet brandWallet;
+
+    private LocalDate dueDate;
     @Column(nullable = false)
     private LocalDate date;
 

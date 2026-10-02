@@ -50,7 +50,7 @@ public class TransactionService {
     }
 
     // Calcular el balance de un mes
-    public BigDecimal getMonthlyBalance(long userId, int month, int year) {
+    public BigDecimal getMonthlyBalance(Long userId, int month, int year) {
         // 1. Definir rango de fechas al mes
         LocalDate starDate = LocalDate.of(year,month,1);
         LocalDate endDate = starDate.withDayOfMonth(starDate.lengthOfMonth());
@@ -71,5 +71,16 @@ public class TransactionService {
             }
         }
         return balance;
+    }
+    public Transaction tooglePaidStatus(Long id) {
+        // 1. Buscamos la transacción existente en la BD
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transacción no encontrada con ID: " + id));
+
+        // 2. Invertimos el valor booleano (!true es false, !false es true)
+        transaction.setPaid(!transaction.isPaid());
+
+        // 3. Guardamos (Hibernate detecta que ya tiene ID y ejecuta un UPDATE en la BD)
+        return transactionRepository.save(transaction);
     }
 }
