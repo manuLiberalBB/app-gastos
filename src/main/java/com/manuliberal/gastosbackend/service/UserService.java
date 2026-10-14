@@ -1,5 +1,7 @@
 package com.manuliberal.gastosbackend.service;
 
+import com.manuliberal.gastosbackend.exception.BadRequestException;
+import com.manuliberal.gastosbackend.exception.ResourceNotFoundException;
 import com.manuliberal.gastosbackend.model.User;
 import com.manuliberal.gastosbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ public class UserService {
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
 
         if (existingUser.isPresent()) {
-            throw new RuntimeException("El email ya está registrado");
+            throw new BadRequestException("El email ya está registrado");
         }
 
         // Si la validación pasa, guardamos en la base de datos
@@ -27,7 +29,7 @@ public class UserService {
     }
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
     }
 
 }

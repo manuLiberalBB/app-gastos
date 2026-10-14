@@ -1,5 +1,6 @@
 package com.manuliberal.gastosbackend.service;
 
+import com.manuliberal.gastosbackend.exception.ResourceNotFoundException;
 import com.manuliberal.gastosbackend.model.Category;
 import com.manuliberal.gastosbackend.model.User;
 import com.manuliberal.gastosbackend.repository.CategoryRepository;
@@ -23,7 +24,7 @@ public class CategoryService {
     public Category createCategory(Long userId, Category category) {
         // Regla de negocio: Verificar que el usuario exista
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + userId));
 
         // Asignamos el usuario a la categoría y guardamos
         category.setUser(user);

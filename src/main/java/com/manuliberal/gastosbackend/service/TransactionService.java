@@ -1,5 +1,7 @@
 package com.manuliberal.gastosbackend.service;
 
+import com.manuliberal.gastosbackend.exception.BadRequestException;
+import com.manuliberal.gastosbackend.exception.ResourceNotFoundException;
 import com.manuliberal.gastosbackend.model.Category;
 import com.manuliberal.gastosbackend.model.CategoryType;
 import com.manuliberal.gastosbackend.model.Transaction;
@@ -34,10 +36,16 @@ public class TransactionService {
 
         // 1. Verifica que el usuario exista
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + userId));
         // 2. Verifica que la categoria exista
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrado con ID: " + categoryId));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrado con ID: " + categoryId));
+
+        // Regla de integridad: la categoría debe pertenecer al mismo usuario
+        if (category.getUser() == null || !category.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("La categoría indicada no pertenece al usuario especificado.");
+        }
+
         // 3. Asignar relaciones a la transacción
         transaction.setUser(user);
         transaction.setCategory(category);
@@ -75,7 +83,7 @@ public class TransactionService {
     public Transaction tooglePaidStatus(Long id) {
         // 1. Buscamos la transacción existente en la BD
         Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transacción no encontrada con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Transacción no encontrada con ID: " + id));
 
         // 2. Invertimos el valor booleano (!true es false, !false es true)
         transaction.setPaid(!transaction.isPaid());
